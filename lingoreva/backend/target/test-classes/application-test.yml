@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:lingoreva_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: 8f000b201a084628f24b2ab870c57c2a715fbc7058df8a2f1de9e1c26b52780a4f5f5c76db3647f07cb81e97cd77db084c01726a458b5be9d332d7ab2f6c054f
+  expiration: 86400000
