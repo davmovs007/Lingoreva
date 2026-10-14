@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import { generateTodayPlan } from '../data/learningData';
 
@@ -8,6 +9,7 @@ const Dashboard: React.FC = () => {
   const [nextLesson, setNextLesson] = useState<any>(null);
   const [wordsToReview, setWordsToReview] = useState<any[]>([]);
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,8 +63,8 @@ const Dashboard: React.FC = () => {
   }, [profile]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    logout();
+    navigate('/login');
   };
 
   if (!profile) return <div className="min-h-screen bg-slate-950 p-8 text-white">Loading dashboard...</div>;
@@ -73,7 +75,7 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-slate-950 px-4 py-6 text-white md:px-8">
       <nav className="mx-auto mb-8 flex max-w-7xl items-center justify-between rounded-[28px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 text-lg font-black text-slate-950">L</div>
+          <img src="/favicon.png?v=2" alt="" aria-hidden="true" className="h-11 w-11 rounded-2xl object-cover" />
           <div>
             <p className="text-lg font-black tracking-tight">Lingoreva</p>
             <p className="text-xs text-slate-300">English growth system</p>

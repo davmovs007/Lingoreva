@@ -92,7 +92,7 @@ const getDaySeed = (date: Date = new Date()) => {
 
 const getDifficultyLabel = (level: string, daySeed: number, index: number) => {
   const levelScore = LEVEL_INDEX[(level as StudyLevel) ?? 'A1'] ?? 1;
-  const combined = levelScore + Math.floor(daySeed / 8) + index;
+  const combined = levelScore + index + (daySeed % 3 === 0 ? 1 : 0);
   if (combined <= 2) return 'Warm-up';
   if (combined <= 4) return 'Core';
   if (combined <= 6) return 'Challenge';
@@ -261,15 +261,20 @@ const PRACTICE_BANK: Record<string, Array<{ title: string; type: string; descrip
 };
 
 export const generateTodayPlan = (minutes: number, level: string = 'A1', skills: string[] = [], goals: string[] = []) => {
+  const studyMinutes = [10, 20, 30].includes(minutes) ? minutes : 20;
   const normalizedSkills = skills.length ? skills : ['Vocabulary', 'Grammar'];
   const normalizedGoals = goals.length ? goals : ['Everyday communication'];
+  const warmupDuration = Math.round(studyMinutes * 0.2);
+  const coreDuration = Math.round(studyMinutes * 0.4);
+  const deepDuration = studyMinutes === 30 ? 5 : 0;
+  const practiceDuration = studyMinutes - warmupDuration - coreDuration - deepDuration;
 
   const tasks = [
     {
       id: 'warmup',
       type: 'Warm-up',
       title: 'Quick pronunciation + review',
-      duration: Math.max(4, Math.round(minutes * 0.2)),
+      duration: warmupDuration,
       description: 'Activate the target language with short speaking and listening tasks.',
       accent: 'rose',
     },
@@ -277,7 +282,7 @@ export const generateTodayPlan = (minutes: number, level: string = 'A1', skills:
       id: 'core',
       type: 'Core lesson',
       title: `${normalizedSkills[0]} focus`,
-      duration: Math.max(6, Math.round(minutes * 0.45)),
+      duration: coreDuration,
       description: `Practice ${normalizedSkills[0].toLowerCase()} with ${normalizedGoals[0].toLowerCase()} phrases and context.`,
       accent: 'indigo',
     },
@@ -285,18 +290,18 @@ export const generateTodayPlan = (minutes: number, level: string = 'A1', skills:
       id: 'practice',
       type: 'Practice',
       title: `${normalizedSkills[1] ?? 'Grammar'} drill`,
-      duration: Math.max(5, Math.round(minutes * 0.25)),
+      duration: practiceDuration,
       description: 'Complete a focused exercise set and review the most common mistakes.',
       accent: 'emerald',
     },
   ];
 
-  if (minutes >= 30) {
+  if (studyMinutes === 30) {
     tasks.push({
       id: 'deep',
       type: 'Deep work',
       title: 'Mini conversation or reading block',
-      duration: 10,
+      duration: deepDuration,
       description: 'Use the extra time for real-life dialogue or careful reading with follow-up questions.',
       accent: 'amber',
     });

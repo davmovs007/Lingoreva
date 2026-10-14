@@ -9,6 +9,7 @@ const PlacementTest: React.FC = () => {
   const [answers, setAnswers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [assignedLevel, setAssignedLevel] = useState<string | null>(null);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const fallbackQuestions = useMemo(() => getPlacementQuestions(), []);
@@ -47,9 +48,13 @@ const PlacementTest: React.FC = () => {
 
   const submitTest = async (finalAnswers: any[]) => {
     setLoading(true);
+    setError('');
     try {
-      await api.post('/placement/evaluate', finalAnswers).catch(() => undefined);
-      const finalLevel = evaluatePlacementScore(finalAnswers);
+      const response = await api.post('/placement/evaluate', finalAnswers);
+      const finalLevel = response.data?.assignedLevel;
+      if (!finalLevel) {
+        throw new Error('The server did not return an assessed level.');
+      }
       setAssignedLevel(finalLevel);
 
       const saved = localStorage.getItem('lingoreva-profile');
@@ -64,7 +69,17 @@ const PlacementTest: React.FC = () => {
         }),
       );
     } catch (err) {
-      console.error('Failed to evaluate test', err);
+      const isLocalAssessment = questions.some((question) => question.correctOption);
+      if (isLocalAssessment) {
+        const finalLevel = evaluatePlacementScore(finalAnswers);
+        setAssignedLevel(finalLevel);
+        const saved = localStorage.getItem('lingoreva-profile');
+        const profile = saved ? JSON.parse(saved) : {};
+        localStorage.setItem('lingoreva-profile', JSON.stringify({ ...profile, level: finalLevel }));
+      } else {
+        console.error('Failed to evaluate test', err);
+        setError('We could not submit your assessment. Check your connection and try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -106,6 +121,11 @@ const PlacementTest: React.FC = () => {
         </div>
 
         <div className="rounded-[30px] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-violet-500/10">
+          {error && (
+            <div role="alert" className="mb-6 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              {error}
+            </div>
+          )}
           <div className="mb-8">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-violet-300">{currentQ.skillCategory}</p>
             <h3 className="text-2xl font-bold md:text-3xl">{currentQ.questionText}</h3>

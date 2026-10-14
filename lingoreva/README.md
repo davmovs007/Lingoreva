@@ -1,63 +1,54 @@
 # Lingoreva - English Learning App
 
+For full documentation, architecture diagrams, and guides, see the root [README.md](../README.md) (Russian) or [README.en.md](../README.en.md) (English).
+
 Lingoreva is a comprehensive, commercial-grade application for learning English, designed with a modern architecture, personalized learning paths, and spaced repetition.
 
 ## Architecture
 
 The project follows a standard client-server architecture:
-- **Backend**: Java 21, Spring Boot 3.3, Spring Security (JWT), Spring Data JPA, Flyway.
-- **Frontend**: React 18, TypeScript, Tailwind CSS, Vite, React Router.
-- **Database**: PostgreSQL for production, H2 for tests.
+- **Backend**: Java 21, Spring Boot 3.3.4, Spring Security (JWT), Spring Data JPA, Flyway.
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Vite, React Router, Vitest.
+- **Database**: PostgreSQL 15 for production, H2 for tests and local fallback.
 - **Infrastructure**: Docker and Docker Compose for easy deployment.
 
 ## Project Structure
 - `/backend`: The Spring Boot API server.
 - `/frontend`: The React application with UI components.
-- `docker-compose.yml`: For spinning up the Postgres database and backend.
+- `docker-compose.yml`: For spinning up the Postgres database, backend, and frontend.
 
 ## How to Run Locally
 
-### Prerequisites
+### 1. Using Docker Compose (Quickest)
+```bash
+docker-compose up --build -d
+```
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+### 2. Manual Development Run
+
+#### Prerequisites
 - JDK 21
 - Node.js 18+ and npm
 - Docker (optional, for running Postgres)
 
-### 1. Database Setup
-You can use Docker to run the PostgreSQL database:
-```bash
-docker-compose up -d postgres
-```
-
-### 2. Backend
-Navigate to the `backend` directory:
+#### Backend
 ```bash
 cd backend
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
-The server will start on `http://localhost:8080`.
-Swagger UI will be available at `http://localhost:8080/swagger-ui.html`.
+Server runs at `http://localhost:8080`.
 
-### 3. Frontend
-Navigate to the `frontend` directory:
+#### Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The application will be available at `http://localhost:3000`.
+Application runs at `http://localhost:3000`.
 
-## Modules Implemented (Core MVP Complete)
-- **Frontend Application**: Fully routed React application with polished Tailwind UI. Includes Dashboard, Login, Register, Vocabulary Review, Daily Lesson, and Placement Test screens.
-- **Authentication & Authorization**: Secure JWT-based registration and login.
-- **User Profile & Onboarding**: API to save learning preferences, course duration, and daily goals.
-- **Placement Test**: Interactive UI and backend evaluator for initial CEFR level assignment.
-- **Spaced Repetition System (Vocabulary)**: SM-2 inspired algorithm with interactive flashcard UI.
-- **Daily Lessons Module**: Course trajectory unlock system, XP, and streak tracking with reading UI.
-- **Database Migrations**: Flyway integration (V1, V2, V3) populated with semantic content.
-
-## Next Steps for Production
-1. **Interactive Exercises**: Expand the Daily Lesson content to include interactive multiple-choice and fill-in-the-blank questions.
-2. **Payment Gateway Integration**: Integrate Stripe or a similar provider in the placeholder Subscription module.
-3. **SSL and Domain**: Secure the application with HTTPS and a custom domain.
-4. **CI/CD Pipeline**: Deploy via GitHub Actions to a cloud provider (AWS/GCP/DigitalOcean).
-
+## Testing
+- Backend: `mvn test` (or `mvn test -DargLine="-Dnet.bytebuddy.experimental=true"` on Java 24+)
+- Frontend: `npm test`

@@ -64,8 +64,9 @@ const Register: React.FC = () => {
               {error && <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200 break-all">{error}</div>}
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">Email</label>
+                <label htmlFor="register-email" className="mb-2 block text-sm font-medium text-slate-200">Email</label>
                 <input
+                  id="register-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -76,8 +77,9 @@ const Register: React.FC = () => {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">Password</label>
+                <label htmlFor="register-password" className="mb-2 block text-sm font-medium text-slate-200">Password</label>
                 <input
+                  id="register-password"
                   type="password"
                   value={password}
                   onChange={(e) => {

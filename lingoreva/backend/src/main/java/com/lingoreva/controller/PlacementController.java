@@ -1,7 +1,7 @@
 package com.lingoreva.controller;
 
 import com.lingoreva.dto.TestAnswerSubmission;
-import com.lingoreva.entity.TestQuestion;
+import com.lingoreva.dto.PlacementQuestionResponse;
 import com.lingoreva.service.PlacementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class PlacementController {
 
 
     @GetMapping
-    public ResponseEntity<List<TestQuestion>> getTest() {
+    public ResponseEntity<List<PlacementQuestionResponse>> getTest() {
         return ResponseEntity.ok(placementService.generateTest());
     }
 

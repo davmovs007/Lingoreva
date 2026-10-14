@@ -1,6 +1,7 @@
 package com.lingoreva.service;
 
 import com.lingoreva.dto.TestAnswerSubmission;
+import com.lingoreva.dto.PlacementQuestionResponse;
 import com.lingoreva.entity.TestQuestion;
 import com.lingoreva.entity.User;
 import com.lingoreva.entity.UserProfile;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class PlacementService {
@@ -27,28 +30,47 @@ public class PlacementService {
     }
 
 
-    public List<TestQuestion> generateTest() {
-        // In a real app, this would be adaptive. For now, fetch a mix of all levels.
-        return questionRepository.findAll();
+    public List<PlacementQuestionResponse> generateTest() {
+        return questionRepository.findAll().stream()
+                .map(question -> new PlacementQuestionResponse(
+                        question.getId(),
+                        question.getQuestionText(),
+                        question.getOptionA(),
+                        question.getOptionB(),
+                        question.getOptionC(),
+                        question.getOptionD(),
+                        question.getCefrLevel(),
+                        question.getSkillCategory()
+                ))
+                .toList();
     }
 
     @Transactional
     public String evaluateTest(List<TestAnswerSubmission> answers) {
+        if (answers == null || answers.isEmpty()) {
+            throw new IllegalArgumentException("At least one placement answer is required");
+        }
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow();
         UserProfile profile = userProfileRepository.findByUserId(user.getId()).orElseThrow();
 
         int score = 0;
         int total = answers.size();
+        Set<Long> answeredQuestionIds = new HashSet<>();
 
         for (TestAnswerSubmission answer : answers) {
-            TestQuestion q = questionRepository.findById(answer.getQuestionId()).orElse(null);
-            if (q != null && q.getCorrectOption().equalsIgnoreCase(answer.getSelectedOption())) {
+            if (answer == null || answer.getQuestionId() == null || answer.getSelectedOption() == null
+                    || !answeredQuestionIds.add(answer.getQuestionId())) {
+                throw new IllegalArgumentException("Placement answers must contain unique question IDs and selected options");
+            }
+            TestQuestion question = questionRepository.findById(answer.getQuestionId())
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown placement question: " + answer.getQuestionId()));
+            if (question.getCorrectOption().equalsIgnoreCase(answer.getSelectedOption())) {
                 score++;
             }
         }
 
-        // Simple evaluation logic
         double percentage = (double) score / total;
         String level = "A1";
         if (percentage > 0.8) level = "B2";

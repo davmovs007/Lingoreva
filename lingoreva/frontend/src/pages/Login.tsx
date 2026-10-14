@@ -28,7 +28,7 @@ const Login: React.FC = () => {
         <div className="grid w-full gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-cyan-200 backdrop-blur-xl">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 font-black text-slate-950">L</span>
+              <img src="/favicon.png?v=2" alt="" aria-hidden="true" className="h-8 w-8 rounded-xl object-cover" />
               Lingoreva — your daily English rhythm
             </div>
 

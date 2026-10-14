@@ -7,6 +7,7 @@ com/lingoreva/repository/UserProfileRepository.class
 com/lingoreva/security/CustomUserDetailsService.class
 com/lingoreva/service/VocabularyService.class
 com/lingoreva/LingorevaApplication.class
+com/lingoreva/dto/PlacementQuestionResponse.class
 com/lingoreva/config/SecurityConfig.class
 com/lingoreva/entity/UserWord.class
 com/lingoreva/dto/LessonSubmissionRequest.class

@@ -9,6 +9,7 @@
 /Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/AuthRequest.java
 /Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/AuthResponse.java
 /Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/LessonSubmissionRequest.java
+/Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/PlacementQuestionResponse.java
 /Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/ProfileUpdateRequest.java
 /Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/RegisterRequest.java
 /Users/davitmovsisyan/Desktop/LingoPath/lingoreva/backend/src/main/java/com/lingoreva/dto/TestAnswerSubmission.java

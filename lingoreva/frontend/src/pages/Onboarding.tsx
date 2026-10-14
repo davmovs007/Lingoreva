@@ -67,7 +67,7 @@ const Onboarding: React.FC = () => {
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 flex items-center justify-between text-sm text-slate-300">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 font-black text-slate-950">L</div>
+            <img src="/favicon.png?v=2" alt="" aria-hidden="true" className="h-10 w-10 rounded-2xl object-cover" />
             <div>
               <p className="font-semibold text-white">Lingoreva</p>
               <p>Personalised onboarding</p>

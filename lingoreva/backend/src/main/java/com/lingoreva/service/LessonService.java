@@ -74,6 +74,20 @@ public class LessonService {
             throw new RuntimeException("Lesson already completed");
         }
 
+        UserProfile profile = userProfileRepository.findByUserId(user.getId()).orElseThrow();
+        String currentLevel = profile.getCurrentLevel() != null ? profile.getCurrentLevel() : "A1";
+        int nextDayNumber = userLessonRepository.findByUserId(user.getId()).stream()
+                .filter(completed -> completed.getLesson().getLevel().equals(currentLevel))
+                .mapToInt(completed -> completed.getLesson().getDayNumber())
+                .max()
+                .orElse(0) + 1;
+        if (!lesson.getLevel().equals(currentLevel) || lesson.getDayNumber() != nextDayNumber) {
+            throw new IllegalArgumentException("Complete lessons in order for your current level");
+        }
+        if (request.getScore() == null || request.getScore() < 0 || request.getScore() > 100) {
+            throw new IllegalArgumentException("Lesson score must be between 0 and 100");
+        }
+
         UserLesson userLesson = new UserLesson();
         userLesson.setUser(user);
         userLesson.setLesson(lesson);
@@ -81,7 +95,6 @@ public class LessonService {
         userLesson.setCompletedAt(LocalDateTime.now());
         
         // Update user profile streak and xp
-        UserProfile profile = userProfileRepository.findByUserId(user.getId()).orElseThrow();
         profile.setXp(profile.getXp() + request.getScore());
         profile.setStreakDays(profile.getStreakDays() + 1); // Simple streak logic
         userProfileRepository.save(profile);

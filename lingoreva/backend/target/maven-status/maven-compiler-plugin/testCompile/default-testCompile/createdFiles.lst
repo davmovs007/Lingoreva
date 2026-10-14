@@ -1,1 +1,5 @@
+com/lingoreva/LessonServiceTest.class
+com/lingoreva/ApplicationIntegrationTest.class
+com/lingoreva/VocabularyServiceTest.class
+com/lingoreva/PlacementServiceTest.class
 com/lingoreva/AuthServiceTest.class
