@@ -174,7 +174,7 @@ LingoPath/
 
 Blueprint создаёт только статический сайт — backend, база данных и локальный компьютер для работы сайта не нужны.
 
-Главная страница включает SEO-метаданные, структурированные данные, `robots.txt` и `sitemap.xml`. После публикации добавьте адрес сайта в [Google Search Console](https://search.google.com/search-console/) и отправьте `https://lingoreva.onrender.com/sitemap.xml`. Если подключите собственный домен, замените домен `lingoreva.onrender.com` в `render.yaml`, `frontend/index.html`, `frontend/public/robots.txt` и `frontend/public/sitemap.xml` на окончательный HTTPS-адрес, затем выполните повторный деплой.
+Главная страница включает SEO-метаданные, структурированные данные, индексируемый HTML-контент, `robots.txt` и `sitemap.xml`. Внутренние страницы исключаются через `noindex`, но не блокируются в `robots.txt`, поэтому поисковые роботы могут корректно прочитать директиву. После публикации добавьте адрес сайта в [Google Search Console](https://search.google.com/search-console/), проверьте главную страницу и отправьте `https://lingoreva.onrender.com/sitemap.xml`. Если подключите собственный домен, замените домен `lingoreva.onrender.com` в `render.yaml`, `frontend/index.html`, `frontend/public/robots.txt` и `frontend/public/sitemap.xml` на окончательный HTTPS-адрес, затем выполните повторный деплой.
 
 ### 1. Запуск через Docker Compose (Рекомендуется)
 

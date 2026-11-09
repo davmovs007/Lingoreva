@@ -1,12 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /login
-Disallow: /register
-Disallow: /onboarding
-Disallow: /dashboard
-Disallow: /review
-Disallow: /lesson
-Disallow: /practice
-Disallow: /placement
 
 Sitemap: https://lingoreva.onrender.com/sitemap.xml
