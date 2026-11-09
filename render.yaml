@@ -8,6 +8,8 @@ services:
     envVars:
       - key: VITE_DEMO_MODE
         value: "true"
+      - key: VITE_SITE_URL
+        value: https://lingoreva.onrender.com
     routes:
       - type: rewrite
         source: /*

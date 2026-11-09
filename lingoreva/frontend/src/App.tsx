@@ -1,7 +1,9 @@
 import React, { Suspense, lazy, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
+import RouteSeo from './components/RouteSeo';
 
+const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -20,6 +22,7 @@ const AppRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext);
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />
       <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/dashboard" />} />
       <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
@@ -44,6 +47,7 @@ function App() {
             </div>
           }
         >
+          <RouteSeo />
           <AppRoutes />
         </Suspense>
       </Router>

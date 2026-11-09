@@ -1,0 +1,16 @@
+{
+  "name": "Lingoreva — English Learning",
+  "short_name": "Lingoreva",
+  "description": "Personalized English learning with daily lessons and vocabulary practice.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020817",
+  "theme_color": "#020817",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ]
+}
