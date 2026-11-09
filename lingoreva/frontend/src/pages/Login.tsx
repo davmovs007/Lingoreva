@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
 const Login: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,6 +13,12 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isStaticDemo) {
+      login('local-device-session');
+      navigate('/dashboard');
+      return;
+    }
+
     try {
       const response = await api.post('/auth/login', { email, password });
       login(response.data.token);
@@ -57,10 +64,22 @@ const Login: React.FC = () => {
 
           <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl md:p-8">
             <div className="mb-6">
-              <p className="text-sm uppercase tracking-[0.24em] text-cyan-300">Welcome back</p>
-              <h2 className="mt-3 text-3xl font-black">Sign in</h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-cyan-300">
+                {isStaticDemo ? 'Free learning' : 'Welcome back'}
+              </p>
+              <h2 className="mt-3 text-3xl font-black">{isStaticDemo ? 'Continue as a guest' : 'Sign in'}</h2>
             </div>
 
+            {isStaticDemo ? (
+              <div className="space-y-5">
+                <p className="text-sm leading-6 text-slate-300">
+                  No account or server needed. Your learning progress is saved only in this browser on this device.
+                </p>
+                <button type="button" onClick={() => { login('local-device-session'); navigate('/onboarding'); }} className="w-full rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500 px-4 py-3 text-sm font-bold text-slate-950">
+                  Start learning
+                </button>
+              </div>
+            ) : (
             <form className="space-y-5" onSubmit={handleLogin}>
               {error && <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div>}
 
@@ -92,13 +111,14 @@ const Login: React.FC = () => {
                 Sign in
               </button>
             </form>
+            )}
 
-            <div className="mt-6 text-center text-sm text-slate-300">
+            {!isStaticDemo && <div className="mt-6 text-center text-sm text-slate-300">
               Don’t have an account?{' '}
               <button type="button" onClick={() => navigate('/register')} className="font-semibold text-cyan-300 hover:text-cyan-200">
                 Create one
               </button>
-            </div>
+            </div>}
           </div>
         </div>
       </div>

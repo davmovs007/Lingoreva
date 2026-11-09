@@ -39,6 +39,7 @@ const readProfile = () => {
 };
 
 const DailyLesson: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const navigate = useNavigate();
   const profile = useMemo(() => readProfile(), []);
   const dayNumber = useMemo(() => {
@@ -64,6 +65,12 @@ const DailyLesson: React.FC = () => {
   useEffect(() => {
     const loadLesson = async () => {
       const localLesson = buildDailyLesson(profile, dayNumber);
+      if (isStaticDemo) {
+        setLesson(localLesson);
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await api.get('/lessons/next');
         if (response.data) {
@@ -80,7 +87,7 @@ const DailyLesson: React.FC = () => {
     };
 
     loadLesson();
-  }, [dayNumber, profile]);
+  }, [dayNumber, isStaticDemo, profile]);
 
   const currentQuestion = lesson?.questions?.[progress.currentIndex];
   const completed = progress.completed;
@@ -166,13 +173,15 @@ const DailyLesson: React.FC = () => {
     localStorage.setItem('lingoreva-day-counter', String(dayNumber + 1));
     persistProgress({ ...progress, completed: true });
 
-    try {
-      await api.post('/lessons/complete', {
-        lessonId: lesson.id,
-        score: 100,
-      });
-    } catch (error) {
-      console.warn('Skipping backend lesson completion update', error);
+    if (!isStaticDemo) {
+      try {
+        await api.post('/lessons/complete', {
+          lessonId: lesson.id,
+          score: 100,
+        });
+      } catch (error) {
+        console.warn('Skipping backend lesson completion update', error);
+      }
     }
   };
 

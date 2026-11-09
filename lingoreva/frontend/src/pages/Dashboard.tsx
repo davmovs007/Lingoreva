@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import { generateTodayPlan } from '../data/learningData';
+import { localVocabulary } from '../data/localVocabulary';
 
 const Dashboard: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const [profile, setProfile] = useState<any>(null);
   const [nextLesson, setNextLesson] = useState<any>(null);
   const [wordsToReview, setWordsToReview] = useState<any[]>([]);
@@ -13,6 +15,29 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (isStaticDemo) {
+        const saved = localStorage.getItem('lingoreva-profile') ?? localStorage.getItem('lingopath-profile');
+        let localProfile: any = {};
+        try {
+          localProfile = saved ? JSON.parse(saved) : {};
+        } catch (error) {
+          console.warn('Could not restore local learning profile', error);
+        }
+        setProfile({
+          currentLevel: localProfile.currentLevel ?? localProfile.level ?? 'A1',
+          dailyGoalMinutes: localProfile.dailyGoalMinutes ?? 20,
+          streakDays: localProfile.streakDays ?? 0,
+          xp: localProfile.xp ?? 0,
+          courseDurationMonths: localProfile.courseDurationMonths ?? 2,
+          targetSkills: localProfile.targetSkills ?? localProfile.skills ?? ['Vocabulary', 'Grammar'],
+          learningGoals: localProfile.learningGoals ?? localProfile.goals ?? ['Everyday communication'],
+        });
+        setNextLesson(null);
+        const reviewedIds = JSON.parse(localStorage.getItem('lingoreva-reviewed-words') ?? '[]') as number[];
+        setWordsToReview(localVocabulary.filter(({ word }) => !reviewedIds.includes(word.id)));
+        return;
+      }
+
       try {
         const [profileRes, lessonRes, reviewRes] = await Promise.all([
           api.get('/profile').catch(() => ({ data: null })),
@@ -50,7 +75,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isStaticDemo]);
 
   const todayPlan = useMemo(() => {
     if (!profile) return null;
@@ -180,7 +205,7 @@ const Dashboard: React.FC = () => {
             <div className="space-y-4">
               <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Words ready</p>
-                <p className="mt-2 text-3xl font-black text-emerald-300">{wordsToReview.length || 12}</p>
+                <p className="mt-2 text-3xl font-black text-emerald-300">{wordsToReview.length || (isStaticDemo ? 0 : 12)}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Next lesson</p>

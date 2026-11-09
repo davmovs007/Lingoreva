@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: lingoreva
+    runtime: static
+    rootDir: lingoreva/frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_DEMO_MODE
+        value: "true"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -4,6 +4,7 @@ import api from '../services/api';
 import { COURSE_LENGTH_OPTIONS, DAILY_GOAL_OPTIONS, GOAL_OPTIONS, LEVEL_OPTIONS, SKILL_OPTIONS, generateTodayPlan } from '../data/learningData';
 
 const Onboarding: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
@@ -35,13 +36,15 @@ const Onboarding: React.FC = () => {
     setError('');
 
     try {
-      await api.put('/profile', {
-        currentLevel: form.level,
-        dailyGoalMinutes: form.dailyGoalMinutes,
-        courseDurationMonths: form.courseDurationMonths,
-        targetSkills: form.skills,
-        learningGoals: form.goals,
-      });
+      if (!isStaticDemo) {
+        await api.put('/profile', {
+          currentLevel: form.level,
+          dailyGoalMinutes: form.dailyGoalMinutes,
+          courseDurationMonths: form.courseDurationMonths,
+          targetSkills: form.skills,
+          learningGoals: form.goals,
+        });
+      }
 
       const plan = generateTodayPlan(form.dailyGoalMinutes, form.level, form.skills, form.goals);
       localStorage.setItem('lingoreva-profile', JSON.stringify({ ...form, plan, xp: 0, streakDays: 0 }));

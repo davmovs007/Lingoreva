@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { localVocabulary } from '../data/localVocabulary';
 
 const VocabularyReview: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const [words, setWords] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -11,6 +13,13 @@ const VocabularyReview: React.FC = () => {
 
   useEffect(() => {
     const fetchWords = async () => {
+      if (isStaticDemo) {
+        const reviewedIds = JSON.parse(localStorage.getItem('lingoreva-reviewed-words') ?? '[]') as number[];
+        setWords(localVocabulary.filter(({ word }) => !reviewedIds.includes(word.id)));
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await api.get('/vocabulary/review');
         setWords(response.data);
@@ -21,9 +30,24 @@ const VocabularyReview: React.FC = () => {
       }
     };
     fetchWords();
-  }, []);
+  }, [isStaticDemo]);
 
   const handleReview = async (correct: boolean, difficulty: number) => {
+    if (isStaticDemo) {
+      const reviewedIds = JSON.parse(localStorage.getItem('lingoreva-reviewed-words') ?? '[]') as number[];
+      localStorage.setItem(
+        'lingoreva-reviewed-words',
+        JSON.stringify([...new Set([...reviewedIds, words[currentIndex].word.id])]),
+      );
+      setShowAnswer(false);
+      if (currentIndex + 1 < words.length) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        navigate('/dashboard');
+      }
+      return;
+    }
+
     try {
       await api.post('/vocabulary/review', {
         wordId: words[currentIndex].word.id,

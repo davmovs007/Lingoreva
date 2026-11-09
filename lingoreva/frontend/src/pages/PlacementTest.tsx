@@ -4,6 +4,7 @@ import api from '../services/api';
 import { evaluatePlacementScore, getPlacementQuestions } from '../data/learningData';
 
 const PlacementTest: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<any[]>([]);
@@ -15,6 +16,12 @@ const PlacementTest: React.FC = () => {
   const fallbackQuestions = useMemo(() => getPlacementQuestions(), []);
 
   useEffect(() => {
+    if (isStaticDemo) {
+      setQuestions(fallbackQuestions);
+      setLoading(false);
+      return;
+    }
+
     const fetchQuestions = async () => {
       try {
         const response = await api.get('/placement');
@@ -32,7 +39,7 @@ const PlacementTest: React.FC = () => {
     };
 
     fetchQuestions();
-  }, [fallbackQuestions]);
+  }, [fallbackQuestions, isStaticDemo]);
 
   const handleSelectOption = (optionKey: string) => {
     const currentQ = questions[currentIndex];
@@ -50,6 +57,15 @@ const PlacementTest: React.FC = () => {
     setLoading(true);
     setError('');
     try {
+      if (isStaticDemo) {
+        const finalLevel = evaluatePlacementScore(finalAnswers);
+        setAssignedLevel(finalLevel);
+        const saved = localStorage.getItem('lingoreva-profile');
+        const profile = saved ? JSON.parse(saved) : {};
+        localStorage.setItem('lingoreva-profile', JSON.stringify({ ...profile, level: finalLevel }));
+        return;
+      }
+
       const response = await api.post('/placement/evaluate', finalAnswers);
       const finalLevel = response.data?.assignedLevel;
       if (!finalLevel) {

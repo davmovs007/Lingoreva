@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
 const Register: React.FC = () => {
+  const isStaticDemo = import.meta.env.VITE_DEMO_MODE === 'true';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -56,10 +57,22 @@ const Register: React.FC = () => {
 
           <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-emerald-500/10 backdrop-blur-xl md:p-8">
             <div className="mb-6">
-              <p className="text-sm uppercase tracking-[0.24em] text-emerald-300">Create account</p>
-              <h2 className="mt-3 text-3xl font-black">Get started</h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-emerald-300">
+                {isStaticDemo ? 'Free learning' : 'Create account'}
+              </p>
+              <h2 className="mt-3 text-3xl font-black">{isStaticDemo ? 'Use as a guest' : 'Get started'}</h2>
             </div>
 
+            {isStaticDemo ? (
+              <div className="space-y-5">
+                <p className="text-sm leading-6 text-slate-300">
+                  No account or server needed. Your learning progress is saved only in this browser on this device.
+                </p>
+                <button type="button" onClick={() => { login('local-device-session'); navigate('/onboarding'); }} className="w-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-500 px-4 py-3 text-sm font-bold text-slate-950">
+                  Start learning
+                </button>
+              </div>
+            ) : (
             <form className="space-y-5" onSubmit={handleRegister}>
               {error && <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200 break-all">{error}</div>}
 
@@ -104,13 +117,14 @@ const Register: React.FC = () => {
                 Create account
               </button>
             </form>
+            )}
 
-            <div className="mt-6 text-center text-sm text-slate-300">
+            {!isStaticDemo && <div className="mt-6 text-center text-sm text-slate-300">
               Already have an account?{' '}
               <button type="button" onClick={() => navigate('/login')} className="font-semibold text-emerald-300 hover:text-emerald-200">
                 Sign in
               </button>
-            </div>
+            </div>}
           </div>
         </div>
       </div>
